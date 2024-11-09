@@ -1,27 +1,21 @@
 from google.cloud import dataproc_v1 as dataproc
 from google.oauth2 import service_account
-import os
 
 # Configuration parameters
 PROJECT_ID = "data-management-3-440208"  # Replace with your Google Cloud project ID omega-keep-411319
 CLUSTER_NAME = "data-management-3"
 REGION = "us-central1"  # Replace with your cluster's region
-PYTHON_FILE_NAME = "./dags/preprocessing_spark.py"  # Local path to your Python script
-CREDENTIAL_PATH = "F:\\SRH_Projects\\NewYorkSubwayPipeline\\creds\\cred.json"
+CREDENTIAL_PATH = "./opt/airflow/creds/cred.json"
 
-def submit_job(dataproc_client):
-    """Submits a PySpark job to the Dataproc cluster."""
-    # Ensure the Python file is accessible
-    # if not os.path.isfile(PYTHON_FILE_NAME):
-    #     raise FileNotFoundError(f"The specified file {PYTHON_FILE_NAME} does not exist.")
+def run_dataproc_job(CLUSTER_NAME, PROJECT_ID, REGION):
+    """Submits and Runs PySpark job to the Dataproc cluster."""
 
-    print(os.path.abspath(PYTHON_FILE_NAME))
-    # job = {
-    #     "placement": {"cluster_name": CLUSTER_NAME},
-    #     "pyspark_job": {
-    #         "main_python_file_uri" : "gs://data_management_2/preprocessing_spark.py",
-    #     }
-    # }
+    # Initialize clients
+    credentials = service_account.Credentials.from_service_account_file(CREDENTIAL_PATH)
+    dataproc_client = dataproc.JobControllerClient(
+        client_options={"api_endpoint": f"{REGION}-dataproc.googleapis.com:443"},
+        credentials=credentials,
+    )
 
     # Initialize request argument(s)
     job = dataproc.Job()
@@ -42,69 +36,7 @@ def submit_job(dataproc_client):
     response = operation.result()
 
     # Handle the response
-    print(response)
-
-    # operation = dataproc_client.submit_job_as_operation(
-    #     request={"project_id": PROJECT_ID, "region": REGION, "job": job}
-    # )
-    # response = operation.result()
-    # print("Job finished:", response)
-    
-def create_cluster():
-    # Create the cluster client.
-    print(PROJECT_ID, CLUSTER_NAME, REGION)
-    credentials = service_account.Credentials.from_service_account_file(CREDENTIAL_PATH)
-    cluster_client = dataproc.ClusterControllerClient(
-        client_options={"api_endpoint": f"{REGION}-dataproc.googleapis.com:443"},
-        credentials = credentials,
-    )
-
-    # Create the cluster config.
-    cluster = {
-        "project_id": PROJECT_ID,
-        "cluster_name": CLUSTER_NAME,
-        "config": {
-            "master_config": {
-                "num_instances": 1,
-                "machine_type_uri": "n1-standard-2",
-                "disk_config": {"boot_disk_size_gb": 500},
-            },
-            "worker_config": {
-                "num_instances": 2,
-                "machine_type_uri": "n1-standard-2",
-                "disk_config": {"boot_disk_size_gb": 500},
-            },
-            "software_config": {
-                "image_version": "2.2-debian12",  # Specify your Dataproc image version
-            },
-            "gce_cluster_config": {
-                "subnetwork_uri": f"projects/{PROJECT_ID}/regions/{REGION}/subnetworks/default",  # Specify your subnetwork URI
-            },
-        },
-    }
-
-    # Create the cluster.
-    operation = cluster_client.create_cluster(
-        request={"project_id": PROJECT_ID, "region": REGION, "cluster": cluster},
-        timeout=1200,
-    )
-    result = operation.result()
-
-    print("Cluster created successfully: {}".format(result.cluster_name))
-
-def main():
-    # create_cluster()
-    # Initialize clients
-    credentials = service_account.Credentials.from_service_account_file(CREDENTIAL_PATH)
-    dataproc_client = dataproc.JobControllerClient(
-        client_options={"api_endpoint": f"{REGION}-dataproc.googleapis.com:443"},
-        credentials=credentials,
-    )
-
-    # # dataproc_client = dataproc.JobControllerClient()
-
-    # # Step 3: Submit job to Dataproc
-    submit_job(dataproc_client)
+    print("Job finished : ",response)
 
 if __name__ == "__main__":
-    main()
+    run_dataproc_job(CLUSTER_NAME, PROJECT_ID, REGION)
