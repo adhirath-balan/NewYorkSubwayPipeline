@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 NUMBER_OF_FETCHES = 5
 WAIT_SECONDS = 10
-BUCKET_NAME = "data_management_2"
+BUCKET_NAME = "data_management_3"
 
 # Load credentials from the JSON key file
 # credentials = service_account.Credentials.from_service_account_file("D:\\SRH\\DM-2\\Project\\creds\\cred.json")

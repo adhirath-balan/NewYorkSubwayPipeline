@@ -3,10 +3,11 @@ from google.oauth2 import service_account
 import os
 
 # Configuration parameters
-PROJECT_ID = "adb-dm2"  # Replace with your Google Cloud project ID omega-keep-411319
-CLUSTER_NAME = "data-management-2"
+PROJECT_ID = "data-management-3-440208"  # Replace with your Google Cloud project ID omega-keep-411319
+CLUSTER_NAME = "data-management-3"
 REGION = "us-central1"  # Replace with your cluster's region
 PYTHON_FILE_NAME = "./dags/preprocessing_spark.py"  # Local path to your Python script
+CREDENTIAL_PATH = "F:\\SRH_Projects\\NewYorkSubwayPipeline\\creds\\cred.json"
 
 def submit_job(dataproc_client):
     """Submits a PySpark job to the Dataproc cluster."""
@@ -24,7 +25,7 @@ def submit_job(dataproc_client):
 
     # Initialize request argument(s)
     job = dataproc.Job()
-    job.pyspark_job.main_python_file_uri = "gs://data_management_2/preprocessing_spark.py"
+    job.pyspark_job.main_python_file_uri = "gs://data_management_3/preprocessing_spark.py"
     job.placement.cluster_name = CLUSTER_NAME
 
     request = dataproc.SubmitJobRequest(
@@ -52,7 +53,7 @@ def submit_job(dataproc_client):
 def create_cluster():
     # Create the cluster client.
     print(PROJECT_ID, CLUSTER_NAME, REGION)
-    credentials = service_account.Credentials.from_service_account_file("D:\\SRH\\DM-2\\Project\\creds\\cred.json")
+    credentials = service_account.Credentials.from_service_account_file(CREDENTIAL_PATH)
     cluster_client = dataproc.ClusterControllerClient(
         client_options={"api_endpoint": f"{REGION}-dataproc.googleapis.com:443"},
         credentials = credentials,
@@ -94,7 +95,7 @@ def create_cluster():
 def main():
     # create_cluster()
     # Initialize clients
-    credentials = service_account.Credentials.from_service_account_file("D:\\SRH\\DM-2\\Project\\creds\\cred.json")
+    credentials = service_account.Credentials.from_service_account_file(CREDENTIAL_PATH)
     dataproc_client = dataproc.JobControllerClient(
         client_options={"api_endpoint": f"{REGION}-dataproc.googleapis.com:443"},
         credentials=credentials,
