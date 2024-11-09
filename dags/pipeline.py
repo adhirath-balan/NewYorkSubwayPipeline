@@ -25,17 +25,21 @@ with DAG(
     fetch_train_data_task = PythonOperator(
         task_id='fetch_train_data',
         python_callable=get_train_data,
-        op_kwargs={'NUMBER_OF_FETCHES': 5, 
-                   'WAIT_SECONDS': 10, 
-                   'client' : bucket_client},
+        op_kwargs={
+            'NUMBER_OF_FETCHES': 5, 
+            'WAIT_SECONDS': 10, 
+            'client' : bucket_client
+        },
     )
 
     run_job = PythonOperator(
         task_id="run_job",
         python_callable=run_dataproc_job,
-        op_kwargs={"PROJECT_ID" : PROJECT_ID,
-                   "REGION" : REGION,
-                    "CLUSTER_NAME" : REGION}
+        op_kwargs={
+            "PROJECT_ID" : PROJECT_ID,
+            "REGION" : REGION,
+            "CLUSTER_NAME" : CLUSTER_NAME
+        }
     )
 
     run_job >> fetch_train_data_task

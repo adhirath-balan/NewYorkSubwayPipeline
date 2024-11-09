@@ -1,8 +1,6 @@
 from nyct_gtfs import NYCTFeed
 import pandas as pd
-import os
 from google.cloud import storage
-# from google.oauth2 import service_account
 import csv
 import time
 import logging
@@ -16,7 +14,6 @@ WAIT_SECONDS = 10
 BUCKET_NAME = "data_management_3"
 
 # Load credentials from the JSON key file
-# credentials = service_account.Credentials.from_service_account_file("D:\\SRH\\DM-2\\Project\\creds\\cred.json")
 bucket_client = storage.Client()
 
 def get_train_data(NUMBER_OF_FETCHES, WAIT_SECONDS, client):
@@ -63,14 +60,6 @@ def get_train_data(NUMBER_OF_FETCHES, WAIT_SECONDS, client):
 
         ts = str(time.time())
         ts = ts.replace(".", "_")
-
-        # Define a directory for saving CSV files
-        # output_directory = "/opt/airflow/output"
-
-        # # Ensure the directory exists
-        # os.makedirs(output_directory, exist_ok=True)
-        # csv_path = os.path.join(output_directory, f"train_data_{ts}.csv")
-        # df_train_data.to_csv(path_or_buf=csv_path, quoting=quoting, index_label="row")
 
         data_to_gcp_bucket(df_train_data, client, f"train_data_{ts}.csv")
 
