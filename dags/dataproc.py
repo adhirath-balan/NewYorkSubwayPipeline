@@ -2,7 +2,7 @@ from google.cloud import dataproc_v1 as dataproc
 
 # Configuration parameters
 PROJECT_ID = "adb-dm2"  # Replace with your Google Cloud project ID omega-keep-411319
-CLUSTER_NAME = "cluster-51df"
+CLUSTER_NAME = "data-management-2"
 REGION = "us-central1"  # Replace with your cluster's region
 
 def run_dataproc_job(CLUSTER_NAME, PROJECT_ID, REGION):

@@ -1,6 +1,5 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from google.api_core.retry import Retry
 from datetime import datetime, timedelta
 from train_fetcher import get_train_data, bucket_client  # Import your function from the appropriate module
 from dataproc import PROJECT_ID, REGION, CLUSTER_NAME, run_dataproc_job
@@ -32,8 +31,8 @@ with DAG(
         },
     )
 
-    run_job = PythonOperator(
-        task_id="run_job",
+    run_spark_job = PythonOperator(
+        task_id="run_spark_job",
         python_callable=run_dataproc_job,
         op_kwargs={
             "PROJECT_ID" : PROJECT_ID,
@@ -42,4 +41,4 @@ with DAG(
         }
     )
 
-    run_job >> fetch_train_data_task
+    fetch_train_data_task >> run_spark_job

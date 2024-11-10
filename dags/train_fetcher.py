@@ -1,7 +1,6 @@
 from nyct_gtfs import NYCTFeed
 import pandas as pd
 from google.cloud import storage
-import csv
 import time
 import logging
 
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 NUMBER_OF_FETCHES = 5
 WAIT_SECONDS = 10
-BUCKET_NAME = "data_management_3"
+BUCKET_NAME = "data_management_2"
 
 # Load credentials from the JSON key file
 bucket_client = storage.Client()
@@ -27,7 +26,6 @@ def get_train_data(NUMBER_OF_FETCHES, WAIT_SECONDS, client):
              "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si"]
 
     columns = ["readable","direction", "route_id", "headsign_text", "departure_time", "location", "location_status", "last_position_update"]
-    quoting = csv.QUOTE_ALL
 
     for i in range(NUMBER_OF_FETCHES):
         logger.info(f"Starting run: {i}")
@@ -48,8 +46,6 @@ def get_train_data(NUMBER_OF_FETCHES, WAIT_SECONDS, client):
                     location = t.location
                     location_status = t.location_status
                     last_position_update = t.last_position_update
-
-                    
 
                     row =  [readable,direction, route_id, headsign_text, departure_time, location, location_status, last_position_update]
                     list_rows.append(row)
