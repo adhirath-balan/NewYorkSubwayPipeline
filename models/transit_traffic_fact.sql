@@ -1,16 +1,23 @@
 {{ config(materialized='table') }}
  
-SELECT
-  `Datetime` AS `Date Key`,
-  EXTRACT(YEAR FROM `Datetime`) AS year,
-  EXTRACT(MONTH FROM `Datetime`) AS month,
-  EXTRACT(DAY FROM `Datetime`) AS day,
-  EXTRACT(QUARTER FROM `Datetime`) AS quarter,
-  CASE
-    WHEN EXTRACT(DAYOFWEEK FROM `Datetime`) IN (1, 7) THEN 'Weekend'
-    ELSE 'Weekday'
-  END AS weekday_weekend,
-   EXTRACT(HOUR FROM `Datetime`) AS time_of_day
-FROM
-  `data_management_2.NYC_subway_traffic_2017-2021` as nst
+select
+    tf.Datetime,
+    sd.`Station ID`,
+    tf.Entries,
+    tf.Exits,
+    sl.booth
  
+ 
+ 
+from
+    `data_management_2.NYC_subway_traffic_2017-2021` tf
+    left join {{ ref('Stations_Dimension') }} sd
+        on tf.`Stop Name` = sd.`Stop Name`
+ 
+    -- booth
+    left join data_management_2.station_name_mapping snm
+    on lower(tf.`Stop Name`) = lower(snm.headsign_text)
+    left join data_management_2.station_lookup as sl
+    on (
+        replace(lower(sl.station),"st ", "st. ") = replace(replace(lower(tf.`Stop Name`), "av", "ave"), "st ", "st. ")
+        or lower(sl.station) = lower(snm.station))
