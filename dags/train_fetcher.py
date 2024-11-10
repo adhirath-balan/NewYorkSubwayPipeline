@@ -4,14 +4,13 @@ from google.cloud import storage
 import time
 import logging
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 # Configuration parameters
-LOCAL_USER = "leon"
-# LOCAL_USER = "adhirath"
+# LOCAL_USER = "leon"
+LOCAL_USER = "adhirath"
 
 NUMBER_OF_FETCHES = 5
 WAIT_SECONDS = 10
@@ -20,7 +19,6 @@ if LOCAL_USER == "leon":
 elif LOCAL_USER == "adhirath":
     BUCKET_NAME = "data_management_2"
 
-# Load credentials from the JSON key file
 bucket_client = storage.Client()
 
 def get_train_data(NUMBER_OF_FETCHES, WAIT_SECONDS, client):
@@ -81,7 +79,6 @@ def data_to_gcp_bucket(df, client, csv_name):
     blob = bucket.blob(csv_name)
     csv_data = df.to_csv(index=False)
 
-    # Upload CSV to GCS
     blob.upload_from_string(csv_data, content_type='text/csv')
 
 if __name__ == "__main__":
