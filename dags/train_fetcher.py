@@ -8,9 +8,17 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+# Configuration parameters
+LOCAL_USER = "leon"
+# LOCAL_USER = "adhirath"
+
 NUMBER_OF_FETCHES = 5
 WAIT_SECONDS = 10
-BUCKET_NAME = "data_management_2"
+if LOCAL_USER == "leon":
+    BUCKET_NAME = "data_management_3"
+elif LOCAL_USER == "adhirath":
+    BUCKET_NAME = "data_management_2"
 
 # Load credentials from the JSON key file
 bucket_client = storage.Client()

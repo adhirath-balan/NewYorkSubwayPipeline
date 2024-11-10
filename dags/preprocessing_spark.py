@@ -1,16 +1,37 @@
 from pyspark.sql import SparkSession, functions as f
 from google.cloud import bigquery
 
+# Configuration parameters
+LOCAL_USER = "leon"
+# LOCAL_USER = "adhirath"
+
+if LOCAL_USER == "leon":
+    BUCKET_NAME = "data_management_3"
+    PROJECT_ID = "data-management-3-440208"
+    DATASET_ID =  "new_project"
+    TABLE_ID = "new_table"
+    APP_NAME = 'DataManagement3'
+    GS_CSV_PATH = "gs://data_management_3/*.csv"
+elif LOCAL_USER == "adhirath":
+    BUCKET_NAME = "data_management_2"
+    PROJECT_ID = "adb-dm2"
+    DATASET_ID =  "new_project"
+    TABLE_ID = "new_table"
+    APP_NAME = 'DataManagement2'
+    GS_CSV_PATH = "gs://data_management_2/*.csv"
+    
+
+
 def preprocessing_big_data(bucket_name, project_id, dataset_id, table_id):
     spark = SparkSession.builder\
             .master("yarn")\
-            .appName('DataManagement2')\
+            .appName(APP_NAME)\
             .getOrCreate()
     
     spark.conf.set("temporaryGcsBucket", bucket_name)
 
     df = spark.read.csv(
-        "gs://data_management_2/*.csv",
+        GS_CSV_PATH,
         sep = ",",
         header = True
     )
@@ -75,4 +96,4 @@ def create_project_and_dataset(project_id, dataset_id, table_id):
     return table_ref
 
 if __name__ == "__main__":
-    preprocessing_big_data("data_management_2", "adb-dm2", "new_project", "new_table")
+    preprocessing_big_data(BUCKET_NAME, PROJECT_ID, DATASET_ID, TABLE_ID)
